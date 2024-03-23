@@ -1,0 +1,365 @@
+﻿
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>AcilPano</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Css/app")
+    @Scripts.Render("~/bundles/jquery")
+    <script type="text/javascript">
+        $(function () {
+            var dakika = 60000;
+            var saat = dakika * 60;
+            $('.easyPieChart').each(function () {
+                var $this = $(this),
+                    $data = $this.data(),
+                    $step = $this.find('.step'),
+                    $targetValue = parseInt($($data.target).text()),
+                    $value = 0;
+                    
+                $data.onStep = function (value) {
+                    $value = value;
+                    $step.text(parseInt(value));
+                    $data.target && $($data.target).text(parseInt(value) + $targetValue);
+
+                }
+                $data.animate = 2000;
+                $(this).easyPieChart($data);
+            });
+            
+            function yatanHastaSay() {
+                var count = 100 * Math.random();
+                var oCount;
+
+                $.ajax({
+                    type: "GET",
+                    url: "http://ebys.canakkalekhb.gov.tr/cozumhbys/hastanebilgi?tur=yatanhastalistesi&servisler=4118,4119,4120,4121,4122,4123,4124,4125,4126,4127,4128,4130,4131,4132,14147,14148,14187,14314,14357",
+                    datatype: "XML",
+                    success: function (o) {
+                        oCount = $(o).find("RECORDS").length;
+                        oCount = Math.floor(oCount * 104 / 100);
+                        $('.easyPieChart').data('easyPieChart').update(oCount);
+                    }
+                });
+                return oCount;
+            };
+
+            yatanHastaSay();
+            setInterval(function () {
+               yatanHastaSay();
+                //$('.easyPieChart').data('easyPieChart').update(Math.floor(yatanHastaSay()));
+               ////$('.easyPieChart').data('easyPieChart').update();
+            }, saat);
+            //setInterval(yatanHastaSay(), 5000);
+
+            $.ajax({
+                type: "GET",
+                url: "http://ebys.canakkalekhb.gov.tr/cozumhbys/hastanebilgi?tur=nobetlistesi&sr_key=4035",
+                datatype: "XML",
+                success: function (o) {
+                    //Nöbetçi Doktor Filtre liste
+                    var nbtDoktor = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '5';
+                        }),
+                        //Nöbetçi Uzman Filtre liste
+                        nbtUzman = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '8';
+                        }),
+                        //Nöbetçi Hemşire Filtre Liste
+                        nbtHems = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '6';
+                        }),
+                        //Nöbetçi Sağlık Memuru Filtre Liste
+                        nbtSagMem = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '7';
+                        }),
+                        //Nöbetçi Röntgen Teknisyeni Filtre Liste
+                        nbtRontTek = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '10';
+                        }),
+                        //Nöbetçi Tomografi Teknisyeni Filtre Liste
+                        nbtTTek = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '11';
+                        }),
+                        //Nöbetçi Labaratuvar Teknisyeni Filtre Liste
+                        nbtLabTek = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '12';
+                        }),
+                        //Nöbetçi Süpervizor Filtre Liste
+                        nbtSupervizor = $(o).find('RECORDS').filter(function() {
+                            return $('NOBETTURKOD', this).text() === '9';
+                        });
+
+                    $(".nbtDoktor").empty();
+                    nbtDoktor.find('PERSONEL').each(function () {
+                        $(".nbtDoktor").append($(this).text() + "<br />");
+                    });
+                    $(".nbtUzman").empty();
+                    nbtUzman.find('PERSONEL').each(function () {
+                        $(".nbtUzman").append($(this).text() + "<br />");
+                    });
+                    $(".nbtHems").empty();
+                    nbtHems.find('PERSONEL').each(function () {
+                        $(".nbtHems").append($(this).text() + "<br />");
+                    });
+                    $(".nbtSagMem").empty();
+                    nbtSagMem.find('PERSONEL').each(function () {
+                        $(".nbtSagMem").append($(this).text() + "<br />");
+                    });
+                    $(".nbtRontTek").empty();
+                    nbtRontTek.find('PERSONEL').each(function () {
+                        $(".nbtRontTek").append($(this).text() + "<br />");
+                    });
+                    $(".nbtTTek").empty();
+                    nbtTTek.find('PERSONEL').each(function () {
+                        $(".nbtTTek").append($(this).text() + "<br />");
+                    });
+                    $(".nbtLabTek").empty();
+                    nbtLabTek.find('PERSONEL').each(function () {
+                        $(".nbtLabTek").append($(this).text() + "<br />");
+                    });
+                    $(".nbtSupervizor").empty();
+                    nbtSupervizor.find('PERSONEL').each(function () {
+                        $(".nbtSupervizor").append($(this).text() + "<br />");
+                    });
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <section class="vbox flex" style="margin-top: 20px;">
+        <!-- Left Section -->
+        <div class="col-lg-4">
+            <!-- Hastane bilgileri Alanı -->
+
+            <section class="panel panel-default">
+                @*<header class="panel-heading"> Hastane Bilgileri </header>*@
+                <div class="panel-body text-center">
+                    <h4 class="yatakSay">104</h4> <small class="text-muted block">Kadro Yatak</small>
+                    <div class="inline">
+                        <div style="width: 188px; height: 188px; line-height: 188px;" class="easypiechart easyPieChart" data-percent="10" data-line-width="30" data-track-color="#eee" data-bar-color="#afcf6f" data-scale-color="#fff" data-size="188" data-line-cap="butt">
+                            <span class="h2 step">10</span>%
+                            <div class="easypie-text">Doluluk Oranı</div>
+                            <canvas width="188" height="188"></canvas>
+                        </div>
+                    </div>
+                </div> @*<div class="panel-footer"><small>% of avarage rate of the visits</small></div>*@
+            </section>
+
+
+
+            @*<section class="panel panel-default">
+                    <div class="easyPieChart percent" data-percent="86" data-line-width="20" data-bar-color="#4cc0c1" data-track-color="#f5f5f5" data-scale-color="false" data-size="130" data-line-cap="butt" data-animate="1000" style="width: 130px; height: 130px; line-height: 130px; margin-left: auto; margin-right: auto;">
+                        <span class="percent"></span>
+                    </div>
+                    <ul class="list-group no-radius">
+                        <li class="list-group-item">
+                            <span class="pull-right">Kadro Yatak Sayısı</span>
+                            <span class="label bg-primary">104</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="pull-right">35000</span>
+                            <span class="label bg-primary">1</span>
+                        </li>
+                        <li class="list-group-item">
+                            <span class="pull-right">35000</span>
+                            <span class="label bg-primary">1</span>
+                        </li>
+                    </ul>
+                </section>*@
+
+
+            <!-- Hastane bilgileri Alanı Bitiş -->
+            <!-- Nöbetçi Uzman Hekim-->
+            <section class="panel panel-default">
+                <header class="panel-heading bg-info lt no-border">
+                    <div class="clearfix">
+                        <a href="#" class="pull-left thumb avatar b-3x m-r"> <img src="/Content/Images/avatar_default_female.jpg" class="img-circle"> </a>
+                        <div class="clear">
+                            <div class="h3 m-t-xs m-b-xs text-white nbtUzman">
+                                Op. Dr. Ahmet Zeren
+                            </div>
+                            <small class="text-muted">Nöbetçi Uzman Hekim</small>
+                        </div>
+                    </div>
+                </header>
+            </section>
+            <!-- Nöbetçi Eczane Bilgileri-->
+            <section class="panel panel-default">
+                <header class="panel-heading bg-danger lt no-border">
+                    <div class="clearfix">
+                        <a href="#" class="pull-left thumb avatar b-3x m-r"> <img src="/Content/Images/avatar_default_female.jpg" class="img-circle"> </a>
+                        <div class="clear">
+                            <div class="h3 m-t-xs m-b-xs text-white">
+                                Buzbilek Eczanesi
+                                <i class="fa fa-circle text-white pull-right text-xs m-t-sm"></i>
+                            </div>
+                            <small class="text-muted">Nöbetçi Eczane</small>
+                        </div>
+                    </div>
+                </header>
+                <div class="list-group no-radius alt">
+                    <a class="list-group-item" href="#"> <span class="badge bg-success">E</span> <i class="fa fa-comment icon-muted"></i> İstiklal Caddesi No: 35 Biga </a>
+                    @*<a class="list-group-item" href="#"> <span class="badge bg-info">A</span> <i class="fa fa-envelope icon-muted"></i> Yerköy Cad. </a>*@
+                    <a class="list-group-item" href="#"> <span class="badge bg-light">T</span> <i class="fa fa-eye icon-muted"></i> + 90 286 316 10 06 </a>
+                </div>
+            </section>
+            <!-- Nöbetçi Eczane Bilgileri Bitiş-->
+        </div>
+        <!-- Left Section End -->
+        <!-- Main Section -->
+
+        <div class="col-lg-8">
+            <!-- Nöbetçi Doktor -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Doktor
+                        </a> <small class="block text-muted nbtDoktor">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Hemşire -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Hemşire
+                        </a> <small class="block text-muted nbtHems">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Sağlık Memuru -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Sağlık Memuru
+                        </a> <small class="block text-muted nbtSagMem">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Röntgen Teknisyeni -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Röntgen Teknisyeni
+                        </a> <small class="block text-muted nbtRontTek">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Tomografi Teknisyeni -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Tomografi Teknisyeni
+                        </a> <small class="block text-muted nbtTTek">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Labaratuvar Teknisyeni -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Labaratuvar Teknisyeni
+                        </a> <small class="block text-muted nbtLabTek">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Nöbetçi Supervizör -->
+            <section class="panel panel-info">
+                <div class="panel-body">
+                    <a href="#" class="thumb pull-right m-l">
+                        <img src="/Content/Images/avatar_default.jpg" class="img-circle">
+                    </a>
+                    <div class="clear">
+                        <a href="#" class="text-info">
+                            Nöbetçi Süpervizör
+                        </a> <small class="block text-muted nbtSupervizor">Mike Tyson</small>
+                    </div>
+                </div>
+            </section>
+            <!-- Slide Section -->
+            <section class="panel panel-default bg-dark">
+                <div class="carousel slide auto panel-body" id="c-slide" data-ride="carousel">
+                    <ol class="carousel-indicators out">
+                        <li data-target="#c-slide" data-slide-to="0" class=""></li>
+                        <li data-target="#c-slide" data-slide-to="1" class=""></li>
+                        <li data-target="#c-slide" data-slide-to="2" class=""></li>
+                        <li data-target="#c-slide" data-slide-to="3" class=""></li>
+                    </ol>
+                    <div class="carousel-inner">
+                        <div class="item active">
+                            <p class="text-center">
+                                <em class="h4 text-mute">Save your time</em><br>
+                                <small class="text-muted">Many components</small>
+                            </p>
+                        </div>
+                        <div class="item">
+                            <p class="text-center">
+                                <em class="h4 text-mute">Nice and easy to use</em><br>
+                                <small class="text-muted">Full documents</small>
+                            </p>
+                        </div>
+                        <div class="item">
+                            <p class="text-center">
+                                <em class="h4 text-mute">Mobile header first</em><br>
+                                <small class="text-muted">Mobile/Tablet/Desktop</small>
+                            </p>
+                        </div>
+                        <div class="item">
+                            <p class="text-center">
+                                <em class="h4 text-mute">Mobile header first</em><br>
+                                <small class="text-muted">Mobile/Tablet/Desktop</small>
+                            </p>
+                        </div>
+                    </div>
+                    <a class="left carousel-control" href="#c-slide" data-slide="prev">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+                    <a class="right carousel-control" href="#c-slide" data-slide="next">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+                </div>
+            </section>
+        </div>
+
+    </section>
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery-ui")
+    @*@Scripts.Render("~/Scripts/signalr")*@
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/piechart")
+    <script src="/Scripts/app.plugin.js"></script>
+
+</body>
+</html>

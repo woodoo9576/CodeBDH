@@ -1,0 +1,50 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html lang="tr">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1" />
+    <title>Biga Devlet Hastanesi | Poliklinik Display</title>
+    @Styles.Render("~/Content/css")
+    @Styles.Render("~/Css/app")
+    @Scripts.Render("~/bundles/jquery")
+
+</head>
+<body class="" style="">
+    <audio id="NotifySound">
+        <source src="../Content/Sounds/Toney7.wav" />
+    </audio>
+
+    <section class="vbox flex">
+        <div class="row m-sm" id="line">
+            <!-- iÇERİK BU ALANA GELECEK-->
+
+            <!-- İÇERİK SONU -->
+        </div>
+    </section>
+
+    @Scripts.Render("~/bundles/modernizr")
+    @Scripts.Render("~/bundles/jquery-ui")
+    @Scripts.Render("~/Scripts/signalr")
+    @Scripts.Render("~/bundles/bootstrap")
+    @Scripts.Render("~/Scripts/piechart")
+    <script src="~/Scripts/SectionTicker.js"></script>
+    <script src="~/Scripts/fontFlex.js"></script>
+    @* ReSharper disable once Html.PathError *@
+<script src="../signalr/hubs"></script>
+    <script>
+    $(function () {
+        $('h1').fontFlex(20, 60, 40);
+        $('h2').fontFlex(20, 60, 40);
+        $('h3').fontFlex(20, 60, 40);
+        $('h4').fontFlex(20, 60, 40);
+        $('h5').fontFlex(20, 60, 40);
+        $('h6').fontFlex(20, 60, 40);
+    });
+</script>
+
+</body>
+</html>
